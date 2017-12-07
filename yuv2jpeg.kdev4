@@ -1,0 +1,4 @@
+[Project]
+Name=yuv2jpeg
+Manager=KDevCMakeManager
+VersionControl=kdevgit
