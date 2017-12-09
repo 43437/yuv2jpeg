@@ -19,6 +19,7 @@ using namespace std;
  * @param height YUV42的高
  *
  */
+
 int MyWriteJPEG(AVFrame* pFrame, int width, int height, int iIndex)
 {
     // 输出文件路径
@@ -107,6 +108,11 @@ int MyWriteJPEG(AVFrame* pFrame, int width, int height, int iIndex)
     return 0;
 }
 
+
+const char* video_size2 = "1280x720";
+const char* video_size1 = "426x240";
+const char* video_size3 = "512x288";
+
 int Work_Save2JPG()
 {
     int videoStream = -1;
@@ -136,8 +142,10 @@ int Work_Save2JPG()
      *  来查询视频的信息，yuv文件获得的方式是在shell命令行下使用
      *  ffmpeg -i *.mp4 *.yuv 直接转换过来的
      */
-    av_dict_set(&options, "framerate", "23.98", 0);
-    av_dict_set(&options, "video_size", "426x240", 0);
+//     av_dict_set(&options, "framerate", "23.98", 0);
+
+    // incorrect video_size will cause saved jpeg not right, even crash when excute appliction, so make sure you know the video size you want save to jpeg.
+    av_dict_set(&options, "video_size", video_size1, 0);
     
     //打开视频文件
     if( avformat_open_input(&pFormatCtx, filename, NULL, &options) != 0 ) {
@@ -204,6 +212,8 @@ int Work_Save2JPG()
         SWS_BICUBIC, NULL, NULL, NULL);
 
     int i = 0;
+    
+    //if you change the "if" below to "while", it will continue save the video to jpeg, otherwise it only change the first packet frame to jpeg
     if( av_read_frame(pFormatCtx, &packet) >= 0 ) {
         if( packet.stream_index == videoStream ) {
             avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
